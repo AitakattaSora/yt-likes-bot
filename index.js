@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
+const axios = require('axios');
 const getYouTubeID = require('get-youtube-id');
 const abbreviate = require('number-abbreviate');
-const fetch = require('node-fetch');
 require('dotenv').config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -15,10 +15,11 @@ bot.onText(/https?(.+)/, async (msg) => {
   try {
     if (!admins.includes(msg.from.id.toString())) return;
     const id = getYouTubeID(msg.text);
-    const response = await fetch(
+
+    const response = await axios.get(
       `https://returnyoutubedislikeapi.com/votes?videoId=${id}`
     );
-    const { likes, dislikes } = await response.json();
+    const { likes, dislikes } = response.data;
 
     bot.sendMessage(
       chatId,
